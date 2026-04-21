@@ -18,38 +18,38 @@ const navLinks = [
   
   <body class="bg-[#222E50] text-white font-sans">
     
-<nav class="p-6 border-b border-[#404551] sticky top-0 bg-[#222E50]/80 backdrop-blur-md z-50">
-  <div class="max-w-6xl mx-auto flex justify-end items-center relative min-h-[32px]">
-    
-    <a href="#hero" id="main-logo" class="text-xl font-bold z-20 absolute transition-all duration-700 ease-in-out no-transition" style="left: 50%; transform: translateX(-50%) scale(1.5);">
-  PeMSoft
-</a>
+    <nav class="p-6 border-b border-[#404551] sticky top-0 bg-[#222E50]/80 backdrop-blur-md z-50">
+      <div class="max-w-6xl mx-auto flex justify-end items-center relative min-h-[32px]">
+        
+        <a href="#hero" id="main-logo" class="text-xl font-bold z-20 absolute transition-all duration-700 ease-in-out no-transition" style="left: 50%; transform: translateX(-50%) scale(1.5);">
+      PeMSoft
+    </a>
 
-    <div id="active-section-display" class="text-white font-medium absolute left-1/2 -translate-x-1/2 pointer-events-none z-10 transition-all duration-300 opacity-0 translate-y-2">
-</div>
-    
-    <div id="toggle-menu" class="md:hidden cursor-pointer z-50 w-10 h-10 flex items-center justify-center relative">
-  <div class="hamburger-line"></div>
-</div>
+        <div id="active-section-display" class="text-white font-medium absolute left-1/2 -translate-x-1/2 pointer-events-none z-10 transition-all duration-300 opacity-0 translate-y-2">
+    </div>
+        
+        <div id="toggle-menu" class="md:hidden cursor-pointer z-50 w-10 h-10 flex items-center justify-center relative">
+      <div class="hamburger-line"></div>
+    </div>
 
-    <div class="space-x-6 hidden md:flex">
-      {navLinks.map(link => (
-        <a href={link.href} class="nav-link hover:text-[#007991] transition-colors">{link.label}</a>
+        <div class="space-x-6 hidden md:flex">
+          {navLinks.map(link => (
+            <a href={link.href} class="nav-link hover:text-[#007991] transition-colors">{link.label}</a>
+          ))}
+        </div>
+      </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-[#222E50] z-40 invisible opacity-0 transition-all duration-500 ease-in-out md:hidden flex flex-col items-center justify-center space-y-8 text-2xl font-bold">
+      <a href="#hero" class="mobile-nav-link hover:text-[#007991] transition-all duration-500 opacity-0 translate-y-8">Domů</a>
+      {navLinks.map((link, index) => (
+        <a href={link.href} class="mobile-nav-link hover:text-[#007991] transition-all duration-500 opacity-0 translate-y-8"
+        style={`transition-delay: ${index * 100 + 150}ms`}
+        >
+          {link.label}
+        </a>
       ))}
     </div>
-  </div>
-</nav>
-
-<div id="mobile-menu" class="fixed inset-0 bg-[#222E50] z-40 invisible opacity-0 transition-all duration-500 ease-in-out md:hidden flex flex-col items-center justify-center space-y-8 text-2xl font-bold">
-  <a href="#hero" class="mobile-nav-link hover:text-[#007991] transition-all duration-500 opacity-0 translate-y-8">Domů</a>
-  {navLinks.map((link, index) => (
-    <a href={link.href} class="mobile-nav-link hover:text-[#007991] transition-all duration-500 opacity-0 translate-y-8"
-    style={`transition-delay: ${index * 100 + 150}ms`}
-    >
-      {link.label}
-    </a>
-  ))}
-</div>
 
     <main>
       <slot />
@@ -64,7 +64,6 @@ const navLinks = [
         transition: none !important;
       }
 
-      /* Základní vzhled prostřední čáry */
       .hamburger-line {
         width: 32px;
         height: 3px;
@@ -74,7 +73,6 @@ const navLinks = [
         position: relative;
       }
 
-      /* Horní a spodní čára pomocí pseudoprvků */
       .hamburger-line::before,
       .hamburger-line::after {
         content: "";
@@ -87,230 +85,216 @@ const navLinks = [
         left: 0;
       }
 
-      /* Pozice čar v klidu */
       .hamburger-line::before { transform: translateY(-10px); }
       .hamburger-line::after { transform: translateY(10px); }
 
-      /* STAV KŘÍŽEK (když má rodič třídu .is-active) */
       .is-active .hamburger-line {
-        background-color: transparent; /* Prostřední čára zmizí */
+        background-color: transparent;
       }
 
       .is-active .hamburger-line::before {
-        transform: translateY(0) rotate(45deg); /* Horní se otočí */
+        transform: translateY(0) rotate(45deg);
       }
 
       .is-active .hamburger-line::after {
-        transform: translateY(0) rotate(-45deg); /* Spodní se otočí opačně */
+        transform: translateY(0) rotate(-45deg);
       }
     </style>
     <script is:inline>
-  // --- KONSTANTY A PROMĚNNÉ ---
-  let isScrollingManual = false;
-  let currentActiveSectionId = null;
-  const mainLogo = document.getElementById('main-logo');
-  const toggleMenu = document.querySelector('#toggle-menu');
-  const mobileMenu = document.querySelector('#mobile-menu');
-  const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-  const sectionDisplay = document.getElementById('active-section-display');
+      // --- KONSTANTY A PROMĚNNÉ ---
+      let isScrollingManual = false;
+      let currentActiveSectionId = null;
+      const mainLogo = document.getElementById('main-logo');
+      const toggleMenu = document.querySelector('#toggle-menu');
+      const mobileMenu = document.querySelector('#mobile-menu');
+      const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+      const sectionDisplay = document.getElementById('active-section-display');
 
-  // --- FUNKCE PRO LOGO A TEXT ---
-  function updateLogoPosition(isHero) {
-    if (isHero) {
-      mainLogo.style.left = "50%";
-      mainLogo.style.transform = "translateX(-50%) scale(1.5)";
-    } else {
-      mainLogo.style.left = "0%";
-      mainLogo.style.transform = "translateX(0%) scale(1)";
-    }
-  }
-
-  function sectionDisplayText(sectionName) {
-    if (sectionDisplay.innerText === sectionName) return;
-    
-    sectionDisplay.style.transition = "opacity 0.2s ease-in-out, transform 0.2s ease-out";
-    sectionDisplay.style.opacity = "0";
-    sectionDisplay.style.transform = "translateY(5px)";
-    
-    setTimeout(() => {
-      sectionDisplay.innerText = sectionName;
-      if (sectionName !== '') {
-        sectionDisplay.style.opacity = "1";
-        sectionDisplay.style.transform = "translateY(0)";
-      }
-    }, 200);
-  }
-
-  function applyActiveSection(id) {
-    if (!id || id === currentActiveSectionId) return;
-    currentActiveSectionId = id;
-
-    updateLogoPosition(id === 'hero');
-
-    // Zvýraznění v desktop menu
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('text-[#007991]', 'font-bold'));
-    const desktopLink = document.querySelector(`.nav-link[href="#${id}"]`);
-    if (desktopLink) desktopLink.classList.add('text-[#007991]', 'font-bold');
-
-    // Text sekce (v Hero prázdno, jinde název)
-    if (id === 'hero') {
-      sectionDisplayText('');
-      return;
-    }
-
-    const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
-      document.querySelector(`.mobile-nav-link[href="#${id}"]`);
-    sectionDisplayText(activeLink ? activeLink.innerText : '');
-  }
-
-  // --- MENU LOGIKA ---
-  function toggleAll() {
-    const isOpening = mobileMenu.classList.contains('opacity-0');
-    
-    toggleMenu.classList.toggle('is-active');
-    mobileMenu.classList.toggle('invisible');
-    mobileMenu.classList.toggle('opacity-0');
-    mobileMenu.classList.toggle('opacity-100');
-
-    mobileLinks.forEach(link => {
-      link.style.transitionDelay = isOpening ? "" : "0ms";
-      link.classList.toggle('opacity-0');
-      link.classList.toggle('opacity-100');
-      link.classList.toggle('translate-y-8');
-      link.classList.toggle('translate-y-0');
-    });
-    
-    document.body.classList.toggle('overflow-hidden');
-  }
-
-  toggleMenu.onclick = toggleAll;
-
-  // Kliknutí na mobilní odkazy
-  mobileLinks.forEach(link => {
-    link.onclick = () => {
-      if (mobileMenu.classList.contains('opacity-100')) {
-        toggleAll();
-      }
-    };
-  });
-
-  mainLogo.onclick = () => {
-    if (mobileMenu.classList.contains('opacity-100')) {
-      toggleAll();
-    }
-  };
-
-  // --- OBSERVER (Sledování pohybu) ---
-  const observerOptions = {
-    root: null,
-    rootMargin: '-40% 0px -40% 0px', // Sleduje střed obrazovky
-    threshold: 0
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    const intersectingEntries = entries.filter(entry => entry.isIntersecting);
-    if (!intersectingEntries.length) return;
-
-    const viewportCenter = window.innerHeight / 2;
-    const bestEntry = intersectingEntries.reduce((best, entry) => {
-      const rect = entry.target.getBoundingClientRect();
-      const sectionCenter = rect.top + rect.height / 2;
-      const distance = Math.abs(sectionCenter - viewportCenter);
-
-      if (!best || distance < best.distance) {
-        return { entry, distance };
+      // --- FUNKCE PRO LOGO A TEXT ---
+      function updateLogoPosition(isHero) {
+        if (isHero) {
+          mainLogo.style.left = "50%";
+          mainLogo.style.transform = "translateX(-50%) scale(1.5)";
+        } else {
+          mainLogo.style.left = "0%";
+          mainLogo.style.transform = "translateX(0%) scale(1)";
+        }
       }
 
-      return best;
-    }, null);
-
-    if (!bestEntry) return;
-    const id = bestEntry.entry.target.id;
-
-    // Při manuálním smooth-scrollu nepřepisujeme pozici loga průběžně
-    if (isScrollingManual) {
-      const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
-        document.querySelector(`.mobile-nav-link[href="#${id}"]`);
-      if (id === 'hero') {
-        sectionDisplayText('');
-      } else if (activeLink) {
-        sectionDisplayText(activeLink.innerText);
-      }
-      return;
-    }
-
-    applyActiveSection(id);
-  }, observerOptions);
-
-  // !!! DŮLEŽITÉ: Spuštění sledování pro všechny sekce !!!
-  document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
-
-  // --- SMOOTH SCROLL (Klikání na odkazy) ---
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const targetId = this.getAttribute('href');
-      const targetElement = document.querySelector(targetId);
-
-      if (targetElement) {
-        isScrollingManual = true;
+      function sectionDisplayText(sectionName) {
+        if (sectionDisplay.innerText === sectionName) return;
         
-        // Okamžitá reakce loga na cíl
-        updateLogoPosition(targetId === '#hero');
-
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-
-        // Vypnutí pojistky po dojezdu
-        setTimeout(() => { isScrollingManual = false; }, 800);
+        sectionDisplay.style.transition = "opacity 0.2s ease-in-out, transform 0.2s ease-out";
+        sectionDisplay.style.opacity = "0";
+        sectionDisplay.style.transform = "translateY(5px)";
+        
+        setTimeout(() => {
+          sectionDisplay.innerText = sectionName;
+          if (sectionName !== '') {
+            sectionDisplay.style.opacity = "1";
+            sectionDisplay.style.transform = "translateY(0)";
+          }
+        }, 200);
       }
-    });
-  });
 
-  // --- INITIAL CHECK (Po načtení) ---
-  function initializeSectionState() {
-    const sections = document.querySelectorAll('section[id]');
-    let currentSectionId = 'hero';
+      function applyActiveSection(id) {
+        if (!id || id === currentActiveSectionId) return;
+        currentActiveSectionId = id;
 
-    // 1) Priorita: hash v URL, pokud odpovídá existující sekci
-    const hashId = window.location.hash.replace('#', '');
-    if (hashId && document.getElementById(hashId)?.matches('section[id]')) {
-      currentSectionId = hashId;
-    } else {
-      // 2) Jinak sekce, ve které je střed viewportu
-      const midViewport = window.innerHeight / 2;
-      sections.forEach(sec => {
-        const rect = sec.getBoundingClientRect();
-        if (rect.top <= midViewport && rect.bottom >= midViewport) {
-          currentSectionId = sec.id;
+        updateLogoPosition(id === 'hero');
+
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('text-[#007991]', 'font-bold'));
+        const desktopLink = document.querySelector(`.nav-link[href="#${id}"]`);
+        if (desktopLink) desktopLink.classList.add('text-[#007991]', 'font-bold');
+
+        if (id === 'hero') {
+          sectionDisplayText('');
+          return;
+        }
+
+        const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
+          document.querySelector(`.mobile-nav-link[href="#${id}"]`);
+        sectionDisplayText(activeLink ? activeLink.innerText : '');
+      }
+
+      // --- MENU LOGIKA ---
+      function toggleAll() {
+        const isOpening = mobileMenu.classList.contains('opacity-0');
+        
+        toggleMenu.classList.toggle('is-active');
+        mobileMenu.classList.toggle('invisible');
+        mobileMenu.classList.toggle('opacity-0');
+        mobileMenu.classList.toggle('opacity-100');
+
+        mobileLinks.forEach(link => {
+          link.style.transitionDelay = isOpening ? "" : "0ms";
+          link.classList.toggle('opacity-0');
+          link.classList.toggle('opacity-100');
+          link.classList.toggle('translate-y-8');
+          link.classList.toggle('translate-y-0');
+        });
+        
+        document.body.classList.toggle('overflow-hidden');
+      }
+
+      toggleMenu.onclick = toggleAll;
+
+      // Kliknutí na mobilní odkazy
+      mobileLinks.forEach(link => {
+        link.onclick = () => {
+          if (mobileMenu.classList.contains('opacity-100')) {
+            toggleAll();
+          }
+        };
+      });
+
+      mainLogo.onclick = () => {
+        if (mobileMenu.classList.contains('opacity-100')) {
+          toggleAll();
+        }
+      };
+
+      // --- OBSERVER (Sledování pohybu) ---
+      const observerOptions = {
+        root: null,
+        rootMargin: '-40% 0px -40% 0px', // Sleduje střed obrazovky
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+        if (!intersectingEntries.length) return;
+
+        const viewportCenter = window.innerHeight / 2;
+        const bestEntry = intersectingEntries.reduce((best, entry) => {
+          const rect = entry.target.getBoundingClientRect();
+          const sectionCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(sectionCenter - viewportCenter);
+
+          if (!best || distance < best.distance) {
+            return { entry, distance };
+          }
+
+          return best;
+        }, null);
+
+        if (!bestEntry) return;
+        const id = bestEntry.entry.target.id;
+
+        if (isScrollingManual) {
+          const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
+            document.querySelector(`.mobile-nav-link[href="#${id}"]`);
+          if (id === 'hero') {
+            sectionDisplayText('');
+          } else if (activeLink) {
+            sectionDisplayText(activeLink.innerText);
+          }
+          return;
+        }
+
+        applyActiveSection(id);
+      }, observerOptions);
+
+      document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+
+          if (targetElement) {
+            isScrollingManual = true;
+            
+            updateLogoPosition(targetId === '#hero');
+
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+
+            setTimeout(() => { isScrollingManual = false; }, 800);
+          }
+        });
+      });
+
+      function initializeSectionState() {
+        const sections = document.querySelectorAll('section[id]');
+        let currentSectionId = 'hero';
+
+        const hashId = window.location.hash.replace('#', '');
+        if (hashId && document.getElementById(hashId)?.matches('section[id]')) {
+          currentSectionId = hashId;
+        } else {
+          const midViewport = window.innerHeight / 2;
+          sections.forEach(sec => {
+            const rect = sec.getBoundingClientRect();
+            if (rect.top <= midViewport && rect.bottom >= midViewport) {
+              currentSectionId = sec.id;
+            }
+          });
+        }
+
+        applyActiveSection(currentSectionId);
+
+        requestAnimationFrame(() => {
+          mainLogo.classList.remove('no-transition');
+        });
+
+        setTimeout(() => {
+          mainLogo.classList.remove('no-transition');
+        }, 50);
+      }
+
+      if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', initializeSectionState);
+      } else {
+        initializeSectionState();
+      }
+
+      window.addEventListener('hashchange', () => {
+        const hashId = window.location.hash.replace('#', '');
+        if (hashId && document.getElementById(hashId)?.matches('section[id]')) {
+          applyActiveSection(hashId);
         }
       });
-    }
-
-    applyActiveSection(currentSectionId);
-
-    // Přechody zapínáme až po inicializaci, aby logo při prvním paintu necestovalo po ose X.
-    requestAnimationFrame(() => {
-      mainLogo.classList.remove('no-transition');
-    });
-
-    // Fallback pro případ, že by první frame proběhl dříve než změna třídy.
-    setTimeout(() => {
-      mainLogo.classList.remove('no-transition');
-    }, 50);
-  }
-
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', initializeSectionState);
-  } else {
-    initializeSectionState();
-  }
-
-  window.addEventListener('hashchange', () => {
-    const hashId = window.location.hash.replace('#', '');
-    if (hashId && document.getElementById(hashId)?.matches('section[id]')) {
-      applyActiveSection(hashId);
-    }
-  });
-</script>
+    </script>
   </body>
 </html>
