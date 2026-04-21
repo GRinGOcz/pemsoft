@@ -13,5 +13,6 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  site: 'https://GRinGOcz.github.io/pemsoft/'
+  site: 'https://gringocz.github.io',
+  base: '/pemsoft',
 });
