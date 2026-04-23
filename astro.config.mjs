@@ -14,4 +14,5 @@ export default defineConfig({
   },
 
   site: 'https://gringocz.github.io',
+  base: '/pemsoft/',
 });
