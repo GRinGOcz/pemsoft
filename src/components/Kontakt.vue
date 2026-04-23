@@ -36,15 +36,33 @@ const zprava = ref('');
 const stav = ref<'nic' | 'posilam' | 'hotovo'>('nic');
 
 const odeslat = async () => {
+  if (!email.value || !zprava.value) return; // Drobná pojistka
+  
   stav.value = 'posilam';
   
-  const response = await fetch('/poslat.php', {
-    method: 'POST',
-    body: JSON.stringify({ email: email.value, zprava: zprava.value })
-  });
+  try {
+    const response = await fetch('/poslat.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // TOTO JE KLÍČOVÉ
+      },
+      body: JSON.stringify({ 
+        email: email.value, 
+        zprava: zprava.value 
+      })
+    });
 
-  if (response.ok) {
-    stav.value = 'hotovo';
+    if (response.ok) {
+      stav.value = 'hotovo';
+      email.value = ''; // Vyčistit pole po úspěchu
+      zprava.value = '';
+    } else {
+      stav.value = 'nic';
+      alert('Chyba při odesílání. Zkuste to prosím znovu.');
+    }
+  } catch (error) {
+    stav.value = 'nic';
+    console.error('Chyba:', error);
   }
 };
 </script>

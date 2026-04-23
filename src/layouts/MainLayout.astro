@@ -245,6 +245,8 @@ const navLinks = [
 
           if (targetElement) {
             isScrollingManual = true;
+
+            applyActiveSection(targetId.replace('#', ''));
             
             updateLogoPosition(targetId === '#hero');
 
