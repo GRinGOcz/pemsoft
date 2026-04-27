@@ -13,7 +13,7 @@
         <input 
           v-model="email" 
           type="email" 
-          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
+          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none shadow-xl/20"
           placeholder="email@priklad.cz"
         />
       </div>
@@ -22,13 +22,13 @@
         <textarea 
           v-model="zprava" 
           rows="4" 
-          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
+          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none shadow-xl/20"
         ></textarea>
       </div>
       <button 
         type="submit" 
         :disabled="stav === 'posilam'"
-        class="w-full bg-[#BCD8C1]/70 hover:bg-[#BCD8C1] font-bold py-3 px-8 rounded-lg transition border border-slate-500 disabled:opacity-50"
+        class="w-full text-[#222E50] bg-[#a8c9ae] hover:bg-[#BCD8C1] font-bold py-3 px-8 rounded-lg transition border border-slate-500 disabled:opacity-50"
       >
         {{ stav === 'posilam' ? 'Odesílám...' : 'Odeslat poptávku' }}
       </button>
