@@ -7,6 +7,8 @@ import Cenik from '../components/Cenik.astro';
 import Sluzby from '../components/Sluzby.astro';
 import KontaktniFormular from '../components/Kontakt.vue';
 import '../styles/global.css'
+import { Image } from "astro:assets";
+import bgImage from "../assets/bg.png";
 ---
 
 
@@ -16,7 +18,16 @@ import '../styles/global.css'
 			<div class="absolute bottom-auto left-auto right-0 top-0 h-125 w-125 -translate-x-[30%] translate-y-[20%] rounded-full bg-[#404551] opacity-50 blur-[80px]"></div>
 		</div>
 	</div>      
-	
+
+	<div class="fixed w-full h-full inset-0 -z-10 overflow-hidden bg-[#222E50]">
+  <Image 
+    src={bgImage} 
+    alt="" 
+    fetchpriority="high" 
+    loading="eager" 
+    class="h-full w-full object-center opacity-30 blur-xs"
+  />
+</div>
 	<main class="max-w-6xl mx-auto px-4 py-12">
 		<section id="hero" class="bg-[#007991]/70 py-20 lg:py-32 rounded-3xl border border-[#404551] mb-20">
 			<Hero />
