@@ -1,31 +1,40 @@
 <template>
-  <form @submit.prevent="odeslat" class="space-y-4">
-    <div>
-      <label class="block text-sm text-slate-900 dark:text-slate-400 mb-1">Váš e-mail</label>
-      <input 
-        v-model="email" 
-        type="email" 
-        class="w-full dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
-        placeholder="email@priklad.cz"
-      />
+  <div class="flex flex-row justify-start gap-2 w-full mt-16">
+    <div class="max-w-4xl m-auto gap-6 p-2 basis-auto justify-items-start">
+      <h2 class="text-3xl font-bold mb-2">Petr Meca</h2>
+      <p class="text-lg font-bold">Adresa: <span class="text-lg font-normal mb-2 text-left">Milíkov 192, 73981 Milíkov</span></p>
+      <p class="text-lg font-bold">IČ: <span class="text-lg font-normal mb-2 text-left">23851678</span></p>
+      <p class="text-lg font-bold">E-mail: <span class="text-lg font-normal mb-2 text-left">petrmeca2@gmail.com</span></p>
+      <p class="text-lg font-bold">Mobil: <span class="text-lg font-normal mb-2 text-left">+420 792 377 885</span></p>
     </div>
-    <div>
-      <label class="block text-sm text-slate-900 dark:text-slate-400 mb-1">Zpráva</label>
-      <textarea 
-        v-model="zprava" 
-        rows="4" 
-        class="w-full dark:bg-slate-800 border dark:border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
-      ></textarea>
-    </div>
-    <button 
-      type="submit" 
-      :disabled="stav === 'posilam'"
-      class="w-full bg-[#BCD8C1]/70 hover:bg-[#BCD8C1] font-bold py-3 px-8 rounded-lg transition border border-slate-500 disabled:opacity-50"
-    >
-      {{ stav === 'posilam' ? 'Odesílám...' : 'Odeslat poptávku' }}
-    </button>
-    <p v-if="stav === 'hotovo'" class="text-emerald-400 text-center mt-2">Zpráva byla úspěšně odeslána!</p>
-  </form>
+    <form @submit.prevent="odeslat" class="space-y-4 basis-lg">
+      <div>
+        <label class="block text-lg mb-1">Váš e-mail</label>
+        <input 
+          v-model="email" 
+          type="email" 
+          class="w-full border border-slate-600 rounded-lg p-3 focus:border-blue-500 outline-none"
+          placeholder="email@priklad.cz"
+        />
+      </div>
+      <div>
+        <label class="block text-lg mb-1">Zpráva</label>
+        <textarea 
+          v-model="zprava" 
+          rows="4" 
+          class="w-full border border-slate-600 rounded-lg p-3 focus:border-blue-500 outline-none"
+        ></textarea>
+      </div>
+      <button 
+        type="submit" 
+        :disabled="stav === 'posilam'"
+        class="w-full bg-[#BCD8C1]/70 hover:bg-[#BCD8C1] font-bold py-3 px-8 rounded-lg transition border border-slate-500 disabled:opacity-50"
+      >
+        {{ stav === 'posilam' ? 'Odesílám...' : 'Odeslat poptávku' }}
+      </button>
+      <p v-if="stav === 'hotovo'" class="text-emerald-400 text-center mt-2">Zpráva byla úspěšně odeslána!</p>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,7 +45,7 @@ const zprava = ref('');
 const stav = ref<'nic' | 'posilam' | 'hotovo'>('nic');
 
 const odeslat = async () => {
-  if (!email.value || !zprava.value) return; // Drobná pojistka
+  if (!email.value || !zprava.value) return;
   
   stav.value = 'posilam';
   
@@ -44,7 +53,7 @@ const odeslat = async () => {
     const response = await fetch('/poslat.php', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json' // TOTO JE KLÍČOVÉ
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
         email: email.value, 
@@ -54,7 +63,7 @@ const odeslat = async () => {
 
     if (response.ok) {
       stav.value = 'hotovo';
-      email.value = ''; // Vyčistit pole po úspěchu
+      email.value = '';
       zprava.value = '';
     } else {
       stav.value = 'nic';
