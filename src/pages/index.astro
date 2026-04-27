@@ -3,6 +3,8 @@ import MainLayout from '../layouts/MainLayout.astro';
 import Hero from '../components/Hero.astro';
 import About from '../components/About.astro';
 import Reference from '../components/Reference.astro';
+import Cenik from '../components/Cenik.astro';
+import Sluzby from '../components/Sluzby.astro';
 import KontaktniFormular from '../components/Kontakt.vue';
 import '../styles/global.css'
 ---
@@ -22,9 +24,14 @@ import '../styles/global.css'
 		<section id="o-mne" class="bg-[#007991]/70 py-20 lg:py-32 rounded-3xl border border-[#404551] mb-20">
 			<About />
 		</section>
-
+		<section id="cenik" class="bg-[#007991]/70 py-20 lg:py-32 rounded-3xl border border-[#404551] mb-20">
+			<Cenik />
+		</section>
+		<section id="sluzby" class="bg-[#007991]/70 py-20 lg:py-32 rounded-3xl border border-[#404551] mb-20">
+			<Sluzby />
+		</section>
 		<section id="kontakt" class="bg-[#007991]/70 py-20 lg:py-32 rounded-3xl border border-[#404551] mb-20">
-			<div class= "p-8">
+			<div class= "px-8">
 				<h2 class="text-4xl font-bold mb-6 text-center">Napište mi</h2>
 				<KontaktniFormular client:visible />
 			</div>

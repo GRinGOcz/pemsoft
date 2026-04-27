@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row justify-start gap-2 w-full mt-16">
-    <div class="max-w-4xl m-auto gap-6 p-2 basis-auto justify-items-start">
+  <div class="flex lg:flex-row flex-col justify-center gap-2 w-full mt-16">
+    <div class="rounded-3xl border border-slate-500 bg-[#439A86]/90 p-8 text-left shadow-xl/20 lg:basis-lg mx-6 grid grid-cols-1 justify-center">
       <h2 class="text-3xl font-bold mb-2">Petr Meca</h2>
       <p class="text-lg font-bold">Adresa: <span class="text-lg font-normal mb-2 text-left">Milíkov 192, 73981 Milíkov</span></p>
       <p class="text-lg font-bold">IČ: <span class="text-lg font-normal mb-2 text-left">23851678</span></p>
@@ -13,7 +13,7 @@
         <input 
           v-model="email" 
           type="email" 
-          class="w-full border border-slate-600 rounded-lg p-3 focus:border-blue-500 outline-none"
+          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
           placeholder="email@priklad.cz"
         />
       </div>
@@ -22,7 +22,7 @@
         <textarea 
           v-model="zprava" 
           rows="4" 
-          class="w-full border border-slate-600 rounded-lg p-3 focus:border-blue-500 outline-none"
+          class="w-full border border-slate-700 rounded-lg p-3 focus:border-blue-500 outline-none"
         ></textarea>
       </div>
       <button 

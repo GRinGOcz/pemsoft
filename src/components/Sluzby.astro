@@ -1,0 +1,70 @@
+---
+type AdditionalService = {
+	name: string;
+	price: string;
+	note: string;
+};
+
+const additionalServices: AdditionalService[] = [
+	{
+		name: 'Další podstránka navíc',
+		price: '1 500 až 4 000 Kč',
+		note: 'Podle rozsahu obsahu a unikátního layoutu.'
+	},
+	{
+		name: 'Texty a úprava obsahu',
+		price: 'od 700 Kč',
+		note: 'Když potřebujete pomoct s finálním obsahem nebo strukturou.'
+	},
+	{
+		name: 'Správa a menší úpravy',
+		price: '400 Kč / hod',
+		note: 'Průběžná péče, technické úpravy a obsahové změny.'
+	},
+	{
+		name: 'Napojení externích služeb',
+		price: 'od 3 000 Kč',
+		note: 'Například formuláře, analytika, mapy, newsletter nebo rezervace.'
+	}
+];
+
+const includedItems = [
+	'Konzultace nad zadáním a doporučení vhodného řešení',
+	'Moderní responzivní zpracování a rychlé načítání',
+	'Základní technické SEO a příprava pro indexaci',
+	'Nasazení webu, závěrečné testování a předání'
+];
+---
+
+<div class="container mx-auto px-4 text-center">
+    <h1 class="text-4xl md:text-6xl mb-16">
+        Další služby
+    </h1>
+    <div class="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <div class="rounded-3xl border border-slate-500 bg-[#439A86]/90 p-8 text-left shadow-xl/20">
+            <h3 class="mb-5 text-2xl font-bold text-white">Co bývá standardně v ceně</h3>
+            <div class="grid gap-4 md:grid-cols-2">
+                {includedItems.map((item) => (
+                    <div class="rounded-2xl border border-white/10 bg-[#222E50]/25 p-4 text-white/90">
+                        {item}
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-500 bg-linear-to-b from-[#BCD4A0]/80 to-[#439A86]/85 p-8 text-left text-slate-900 shadow-xl/20">
+            <p class="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-slate-800/70">Doplňkové služby</p>
+            <div class="space-y-4">
+                {additionalServices.map((service) => (
+                    <div class="rounded-2xl border border-slate-700/10 bg-white/35 p-4">
+                        <div class="mb-2 flex items-start justify-between gap-3">
+                            <h4 class="font-bold">{service.name}</h4>
+                            <span class="whitespace-nowrap text-sm font-bold">{service.price}</span>
+                        </div>
+                        <p class="text-sm leading-6 text-slate-800">{service.note}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
