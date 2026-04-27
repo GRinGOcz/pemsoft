@@ -19,7 +19,7 @@ const navLinks = [
   <body class="bg-[#222E50] text-white font-sans">
     
     <nav class="p-6 border-b border-[#404551] sticky top-0 bg-[#222E50]/80 backdrop-blur-md z-50">
-      <div class="max-w-6xl mx-auto flex justify-end items-center relative min-h-[32px]">
+      <div class="max-w-6xl mx-auto flex justify-end items-center relative min-h-8">
         
         <a href="#hero" id="main-logo" class="text-xl font-bold z-20 absolute transition-all duration-700 ease-in-out no-transition" style="left: 50%; transform: translateX(-50%) scale(1.5);">
       PeMSoft
@@ -99,88 +99,126 @@ const navLinks = [
       .is-active .hamburger-line::after {
         transform: translateY(0) rotate(-45deg);
       }
-    </style>
-    <script is:inline>
-      // --- KONSTANTY A PROMĚNNÉ ---
-      let isScrollingManual = false;
-      let currentActiveSectionId = null;
-      const mainLogo = document.getElementById('main-logo');
-      const toggleMenu = document.querySelector('#toggle-menu');
-      const mobileMenu = document.querySelector('#mobile-menu');
-      const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-      const sectionDisplay = document.getElementById('active-section-display');
 
-      // --- FUNKCE PRO LOGO A TEXT ---
-      function updateLogoPosition(isHero) {
-        if (isHero) {
-          mainLogo.style.left = "50%";
-          mainLogo.style.transform = "translateX(-50%) scale(1.5)";
-        } else {
-          mainLogo.style.left = "0%";
-          mainLogo.style.transform = "translateX(0%) scale(1)";
-        }
+      main {
+        position: relative;
+        overflow: hidden;
       }
 
-      function sectionDisplayText(sectionName) {
-        if (sectionDisplay.innerText === sectionName) return;
-        
-        sectionDisplay.style.transition = "opacity 0.2s ease-in-out, transform 0.2s ease-out";
-        sectionDisplay.style.opacity = "0";
-        sectionDisplay.style.transform = "translateY(5px)";
-        
+      main::before {
+        content: "";
+        position: fixed; /* Nahrazuje bg-fixed */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('../assets/bg.png');
+        background-size: cover;
+        background-position: center;
+        z-index: -1; 
+        opacity: 0.3;
+        filter: blur(8px);
+      }
+    </style>
+    <script>
+      function getRequiredElement<T extends Element>(selector: string): T {
+        const element = document.querySelector<T>(selector);
+
+        if (!element) {
+          throw new Error(`Missing required element: ${selector}`);
+        }
+
+        return element;
+      }
+
+      let isScrollingManual = false;
+      let currentActiveSectionId: string | null = null;
+      const mainLogo = getRequiredElement<HTMLAnchorElement>('#main-logo');
+      const toggleMenu = getRequiredElement<HTMLDivElement>('#toggle-menu');
+      const mobileMenu = getRequiredElement<HTMLDivElement>('#mobile-menu');
+      const mobileLinks = document.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link');
+      const sectionDisplay = getRequiredElement<HTMLDivElement>('#active-section-display');
+
+      function updateLogoPosition(isHero: boolean): void {
+        if (isHero) {
+          mainLogo.style.left = '50%';
+          mainLogo.style.transform = 'translateX(-50%) scale(1.5)';
+          return;
+        }
+
+        mainLogo.style.left = '0%';
+        mainLogo.style.transform = 'translateX(0%) scale(1)';
+      }
+
+      function sectionDisplayText(sectionName: string): void {
+        if (sectionDisplay.innerText === sectionName) {
+          return;
+        }
+
+        sectionDisplay.style.transition = 'opacity 0.2s ease-in-out, transform 0.2s ease-out';
+        sectionDisplay.style.opacity = '0';
+        sectionDisplay.style.transform = 'translateY(5px)';
+
         setTimeout(() => {
           sectionDisplay.innerText = sectionName;
+
           if (sectionName !== '') {
-            sectionDisplay.style.opacity = "1";
-            sectionDisplay.style.transform = "translateY(0)";
+            sectionDisplay.style.opacity = '1';
+            sectionDisplay.style.transform = 'translateY(0)';
           }
         }, 200);
       }
 
-      function applyActiveSection(id) {
-        if (!id || id === currentActiveSectionId) return;
-        currentActiveSectionId = id;
+      function getActiveLink(id: string): HTMLAnchorElement | null {
+        return document.querySelector<HTMLAnchorElement>(`.nav-link[href="#${id}"]`) ??
+          document.querySelector<HTMLAnchorElement>(`.mobile-nav-link[href="#${id}"]`);
+      }
 
+      function applyActiveSection(id: string): void {
+        if (!id || id === currentActiveSectionId) {
+          return;
+        }
+
+        currentActiveSectionId = id;
         updateLogoPosition(id === 'hero');
 
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('text-[#007991]', 'font-bold'));
-        const desktopLink = document.querySelector(`.nav-link[href="#${id}"]`);
-        if (desktopLink) desktopLink.classList.add('text-[#007991]', 'font-bold');
+        document.querySelectorAll<HTMLElement>('.nav-link').forEach((link) => {
+          link.classList.remove('text-[#007991]', 'font-bold');
+        });
+
+        const desktopLink = document.querySelector<HTMLElement>(`.nav-link[href="#${id}"]`);
+        desktopLink?.classList.add('text-[#007991]', 'font-bold');
 
         if (id === 'hero') {
           sectionDisplayText('');
           return;
         }
 
-        const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
-          document.querySelector(`.mobile-nav-link[href="#${id}"]`);
-        sectionDisplayText(activeLink ? activeLink.innerText : '');
+        sectionDisplayText(getActiveLink(id)?.innerText ?? '');
       }
 
-      // --- MENU LOGIKA ---
-      function toggleAll() {
+      function toggleAll(): void {
         const isOpening = mobileMenu.classList.contains('opacity-0');
-        
+
         toggleMenu.classList.toggle('is-active');
         mobileMenu.classList.toggle('invisible');
         mobileMenu.classList.toggle('opacity-0');
         mobileMenu.classList.toggle('opacity-100');
 
-        mobileLinks.forEach(link => {
-          link.style.transitionDelay = isOpening ? "" : "0ms";
+        mobileLinks.forEach((link) => {
+          link.style.transitionDelay = isOpening ? '' : '0ms';
           link.classList.toggle('opacity-0');
           link.classList.toggle('opacity-100');
           link.classList.toggle('translate-y-8');
           link.classList.toggle('translate-y-0');
         });
-        
+
         document.body.classList.toggle('overflow-hidden');
       }
 
       toggleMenu.onclick = toggleAll;
 
-      // Kliknutí na mobilní odkazy
-      mobileLinks.forEach(link => {
+      mobileLinks.forEach((link) => {
         link.onclick = () => {
           if (mobileMenu.classList.contains('opacity-100')) {
             toggleAll();
@@ -194,40 +232,45 @@ const navLinks = [
         }
       };
 
-      // --- OBSERVER (Sledování pohybu) ---
-      const observerOptions = {
+      const observerOptions: IntersectionObserverInit = {
         root: null,
-        rootMargin: '-40% 0px -40% 0px', // Sleduje střed obrazovky
+        rootMargin: '-40% 0px -40% 0px',
         threshold: 0
       };
 
       const observer = new IntersectionObserver((entries) => {
-        const intersectingEntries = entries.filter(entry => entry.isIntersecting);
-        if (!intersectingEntries.length) return;
+        const intersectingEntries = entries.filter((entry) => entry.isIntersecting);
+
+        if (!intersectingEntries.length) {
+          return;
+        }
 
         const viewportCenter = window.innerHeight / 2;
-        const bestEntry = intersectingEntries.reduce((best, entry) => {
+        let bestEntry: IntersectionObserverEntry | null = null;
+        let bestDistance = Number.POSITIVE_INFINITY;
+
+        for (const entry of intersectingEntries) {
           const rect = entry.target.getBoundingClientRect();
           const sectionCenter = rect.top + rect.height / 2;
           const distance = Math.abs(sectionCenter - viewportCenter);
 
-          if (!best || distance < best.distance) {
-            return { entry, distance };
+          if (distance < bestDistance) {
+            bestEntry = entry;
+            bestDistance = distance;
           }
+        }
 
-          return best;
-        }, null);
+        if (!bestEntry) {
+          return;
+        }
 
-        if (!bestEntry) return;
-        const id = bestEntry.entry.target.id;
+        const id = bestEntry.target.id;
 
         if (isScrollingManual) {
-          const activeLink = document.querySelector(`.nav-link[href="#${id}"]`) ||
-            document.querySelector(`.mobile-nav-link[href="#${id}"]`);
           if (id === 'hero') {
             sectionDisplayText('');
-          } else if (activeLink) {
-            sectionDisplayText(activeLink.innerText);
+          } else {
+            sectionDisplayText(getActiveLink(id)?.innerText ?? '');
           }
           return;
         }
@@ -235,30 +278,37 @@ const navLinks = [
         applyActiveSection(id);
       }, observerOptions);
 
-      document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
+      document.querySelectorAll('section[id]').forEach((section) => {
+        observer.observe(section);
+      });
 
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href');
-          const targetElement = document.querySelector(targetId);
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (event) => {
+          event.preventDefault();
 
-          if (targetElement) {
-            isScrollingManual = true;
-
-            applyActiveSection(targetId.replace('#', ''));
-            
-            updateLogoPosition(targetId === '#hero');
-
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-
-            setTimeout(() => { isScrollingManual = false; }, 800);
+          const targetId = anchor.getAttribute('href');
+          if (!targetId) {
+            return;
           }
+
+          const targetElement = document.querySelector<HTMLElement>(targetId);
+          if (!targetElement) {
+            return;
+          }
+
+          isScrollingManual = true;
+          applyActiveSection(targetId.replace('#', ''));
+          updateLogoPosition(targetId === '#hero');
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+
+          setTimeout(() => {
+            isScrollingManual = false;
+          }, 800);
         });
       });
 
-      function initializeSectionState() {
-        const sections = document.querySelectorAll('section[id]');
+      function initializeSectionState(): void {
+        const sections = document.querySelectorAll<HTMLElement>('section[id]');
         let currentSectionId = 'hero';
 
         const hashId = window.location.hash.replace('#', '');
@@ -266,10 +316,12 @@ const navLinks = [
           currentSectionId = hashId;
         } else {
           const midViewport = window.innerHeight / 2;
-          sections.forEach(sec => {
-            const rect = sec.getBoundingClientRect();
+
+          sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+
             if (rect.top <= midViewport && rect.bottom >= midViewport) {
-              currentSectionId = sec.id;
+              currentSectionId = section.id;
             }
           });
         }
@@ -293,10 +345,11 @@ const navLinks = [
 
       window.addEventListener('hashchange', () => {
         const hashId = window.location.hash.replace('#', '');
+
         if (hashId && document.getElementById(hashId)?.matches('section[id]')) {
           applyActiveSection(hashId);
         }
       });
     </script>
   </body>
-</html>
+</html> 
