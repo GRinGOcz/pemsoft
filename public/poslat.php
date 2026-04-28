@@ -10,6 +10,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
+function detectMailTransportProblem(): ?string {
+    $sendmailPath = trim((string) ini_get('sendmail_path'));
+
+    if ($sendmailPath === '') {
+        return null;
+    }
+
+    $parts = preg_split('/\s+/', $sendmailPath);
+    $binary = $parts[0] ?? '';
+
+    if ($binary === '') {
+        return null;
+    }
+
+    if (!file_exists($binary)) {
+        return "Konfigurovany sendmail binarni soubor neexistuje: {$binary}";
+    }
+
+    if (!is_executable($binary)) {
+        return "Konfigurovany sendmail binarni soubor neni spustitelny: {$binary}";
+    }
+
+    return null;
+}
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
@@ -31,10 +56,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($data)) {
         $body = "E-mail od odesílatele: " . $email . "\n\n";
         $body .= "Zpráva:\n" . $message;
 
-        if (mail($to, $subject, $body, $headers)) {
+        $mailError = null;
+
+        set_error_handler(static function (int $severity, string $errorMessage) use (&$mailError): bool {
+            $mailError = $errorMessage;
+            return true;
+        });
+
+        $mailSent = mail($to, $subject, $body, $headers);
+        restore_error_handler();
+
+        if ($mailSent) {
             http_response_code(200);
             echo json_encode(["status" => "success"]);
         } else {
+            $transportProblem = detectMailTransportProblem();
+
+            if ($transportProblem !== null) {
+                error_log($transportProblem);
+                http_response_code(500);
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "Server nema nakonfigurovane odchozi e-maily."
+                ]);
+                exit();
+            }
+
+            if ($mailError !== null) {
+                error_log("mail() selhal: " . $mailError);
+            }
+
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => "Odeslání selhalo na straně serveru."]);
         }
@@ -47,3 +98,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($data)) {
     echo json_encode(["status" => "error", "message" => "Metoda nepovolena."]);
 }
 ?>
+

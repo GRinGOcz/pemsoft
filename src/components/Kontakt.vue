@@ -33,6 +33,7 @@
         {{ stav === 'posilam' ? 'Odesílám...' : 'Odeslat poptávku' }}
       </button>
       <p v-if="stav === 'hotovo'" class="text-emerald-400 text-center mt-2">Zpráva byla úspěšně odeslána!</p>
+      <p v-if="chyba" class="text-rose-500 text-center mt-2">{{ chyba }}</p>
     </form>
   </div>
 </template>
@@ -42,11 +43,16 @@ import { ref } from 'vue';
 
 const email = ref('');
 const zprava = ref('');
+const chyba = ref('');
 const stav = ref<'nic' | 'posilam' | 'hotovo'>('nic');
 
 const odeslat = async () => {
-  if (!email.value || !zprava.value) return;
+  if (!email.value || !zprava.value) {
+    chyba.value = 'Vyplňte prosím e-mail i zprávu.';
+    return;
+  }
   
+  chyba.value = '';
   stav.value = 'posilam';
   
   try {
@@ -61,16 +67,20 @@ const odeslat = async () => {
       })
     });
 
+    const result = await response.json().catch(() => null);
+
     if (response.ok) {
       stav.value = 'hotovo';
+      chyba.value = '';
       email.value = '';
       zprava.value = '';
     } else {
       stav.value = 'nic';
-      alert('Chyba při odesílání. Zkuste to prosím znovu.');
+      chyba.value = result?.message ?? 'Chyba při odesílání. Zkuste to prosím znovu.';
     }
   } catch (error) {
     stav.value = 'nic';
+    chyba.value = 'Nepodařilo se spojit se serverem.';
     console.error('Chyba:', error);
   }
 };
